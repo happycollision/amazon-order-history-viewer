@@ -7,7 +7,8 @@
 		"build": "vite build && tsc",
 		"serve": "vite preview",
 		"test": "vitest run",
-		"format": "prettier . --write"
+		"format": "prettier . --write",
+		"prepare": "simple-git-hooks"
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.0.15",
@@ -26,6 +27,8 @@
 		"@vitejs/plugin-react": "^4.3.4",
 		"jsdom": "^26.0.0",
 		"prettier": "3.5.3",
+		"pretty-quick": "^4.1.1",
+		"simple-git-hooks": "^2.12.1",
 		"typescript": "^5.7.2",
 		"vite": "^6.1.0",
 		"vitest": "^3.0.5",
