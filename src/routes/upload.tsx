@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import '../App.css'
 
 export const Route = createFileRoute('/upload')({
   component: Upload,
@@ -7,8 +6,8 @@ export const Route = createFileRoute('/upload')({
 
 function Upload() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
+      <header className="text-purple-700">
         Dis da upload page
       </header>
     </div>

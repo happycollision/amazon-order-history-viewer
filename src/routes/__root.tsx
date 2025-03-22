@@ -4,7 +4,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 export const Route = createRootRoute({
   component: () => (
     <>
-      <header>
+      <header className='bg-red-300'>
         <div>
         Linx
         </div>
