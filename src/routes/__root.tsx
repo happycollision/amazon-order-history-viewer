@@ -11,6 +11,9 @@ export const Route = createRootRoute({
 							<Link to="/">Home</Link>
 						</li>
 						<li>
+							<Link to="/orders/retail">Retail Order History</Link>
+						</li>
+						<li>
 							<Link to="/upload">Upload (TBD)</Link>
 						</li>
 					</ul>
