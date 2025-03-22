@@ -15,7 +15,8 @@ const router = createRouter({
 	defaultPreload: "intent",
 	scrollRestoration: true,
 	defaultStructuralSharing: true,
-	defaultPreloadStaleTime: 0,
+	defaultPreloadStaleTime: Number.POSITIVE_INFINITY,
+	defaultStaleTime: Number.POSITIVE_INFINITY,
 })
 
 // Register the router instance for type safety
