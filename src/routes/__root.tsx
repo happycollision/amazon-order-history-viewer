@@ -5,14 +5,13 @@ export const Route = createRootRoute({
 	component: () => (
 		<>
 			<header className="bg-red-300">
-				<div>Linx</div>
 				<nav>
-					<ul>
+					<ul className="flex gap-4 [&>li>a]:p-4 [&>li>a]:inline-block  [&>li>a]:hover:bg-red-400 [&>li>a[data-status=active]]:bg-red-400 [&>li>a[data-status=active]]:text-white">
 						<li>
 							<Link to="/">Home</Link>
 						</li>
 						<li>
-							<Link to="/upload">Upload</Link>
+							<Link to="/upload">Upload (TBD)</Link>
 						</li>
 					</ul>
 				</nav>
