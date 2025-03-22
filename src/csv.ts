@@ -5,6 +5,7 @@ export function loadCsv<Row>(url: string) {
 		parse<Row>(url, {
 			download: true,
 			header: true,
+			skipEmptyLines: true,
 			complete: (results) => {
 				resolve(results.data)
 			},
