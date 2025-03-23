@@ -61,7 +61,7 @@ function RouteComponent() {
 				search: (current) => dropUndefinedSearchParams({ ...current, amount }),
 			})
 		},
-		[setSearch, year],
+		[setSearch],
 	)
 
 	const setYear = useCallback(
@@ -70,7 +70,7 @@ function RouteComponent() {
 				search: (current) => dropUndefinedSearchParams({ ...current, year }),
 			})
 		},
-		[setSearch, amount],
+		[setSearch],
 	)
 
 	const list = useRef<HTMLDivElement>(null)
