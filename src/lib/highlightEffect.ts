@@ -30,10 +30,20 @@ export const highlightEffect =
 		if (!el) return
 		const text = el.textContent
 		if (!text) return
+
+		if (!match) {
+			// Remove all previous highlights (because we are not inside React's
+			// declarative world anymore)
+			el.querySelectorAll("[data-highlight]").forEach((el) => {
+				el.outerHTML = el.innerHTML
+			})
+			return
+		}
+
 		const index = text.indexOf(match)
 		if (index === -1) return
 		el.innerHTML =
 			text.slice(0, index) +
-			`<span class="${className}">${text.slice(index, index + match.length)}</span>` +
+			`<span data-highlight class="${className}">${text.slice(index, index + match.length)}</span>` +
 			text.slice(index + match.length)
 	}

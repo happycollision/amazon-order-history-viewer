@@ -77,7 +77,6 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!list.current) return
-		if (amount === undefined) return
 		list.current
 			.querySelectorAll("[data-order-total]")
 			.forEach(highlightEffect(amount))
