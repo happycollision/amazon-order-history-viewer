@@ -6,13 +6,26 @@ import { SimpleDate } from "../../components/date"
 import { useCallback, useEffect, useRef } from "react"
 import { highlightEffect } from "../../lib/highlightEffect"
 
+const dropUndefinedSearchParams = <T extends Record<string, unknown>>(
+	obj: T,
+) => {
+	const result = {} as Partial<T>
+	for (const key in obj) {
+		if (obj[key] !== undefined && obj[key] !== "") {
+			result[key] = obj[key]
+		}
+	}
+	return result
+}
+
 export const Route = createFileRoute("/orders/retail")({
 	component: RouteComponent,
 	pendingComponent: () => <div>Papa parse-ing:...</div>,
-	validateSearch: (search) => {
+	validateSearch: (search: Record<string, unknown> | undefined) => {
+		if (search === undefined) return {}
 		return {
-			amount: search.amount as string | undefined,
-			year: search.year as string | undefined,
+			amount: search?.amount as string | undefined,
+			year: search?.year as string | undefined,
 		}
 	},
 	loader: async () => {
@@ -120,14 +133,18 @@ function RouteComponent() {
 
 	const setAmount = useCallback(
 		(amount: string | undefined) => {
-			setSearch({ search: (current) => ({ ...current, amount }) })
+			setSearch({
+				search: (current) => dropUndefinedSearchParams({ ...current, amount }),
+			})
 		},
 		[setSearch, year],
 	)
 
 	const setYear = useCallback(
 		(year: string | undefined) => {
-			setSearch({ search: (current) => ({ ...current, year }) })
+			setSearch({
+				search: (current) => dropUndefinedSearchParams({ ...current, year }),
+			})
 		},
 		[setSearch, amount],
 	)
