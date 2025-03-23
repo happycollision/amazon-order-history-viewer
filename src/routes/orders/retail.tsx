@@ -190,12 +190,12 @@ function RouteComponent() {
 										{multiLine ?
 											<>
 												{cancelled && (
-													<span className="inline-block bg-red-200 rounded-full text-sm px-2 border border-red-500 ">
+													<span className="inline-block bg-red-200 rounded-full text-sm px-2 border border-red-500 dark:bg-red-800 dark:border-red-300">
 														This order was cancelled.
 													</span>
 												)}
 												{giftCardUsed && (
-													<span className="inline-block bg-purple-200 rounded-full text-sm px-2 border border-purple-500 ">
+													<span className="inline-block bg-purple-200 dark:bg-purple-800 dark:border-purple-300 rounded-full text-sm px-2 border border-purple-500 ">
 														A gift card was used on this order.{" "}
 														<OrderDetailsLink orderId={order.id}>
 															Check the order details
