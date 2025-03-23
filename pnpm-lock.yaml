@@ -57,6 +57,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.3.4(vite@6.2.2(@types/node@22.13.11)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3))
+      babel-plugin-react-compiler:
+        specifier: 19.0.0-beta-3229e95-20250315
+        version: 19.0.0-beta-3229e95-20250315
       eslint:
         specifier: ^9.23.0
         version: 9.23.0(jiti@2.4.2)
@@ -989,6 +992,9 @@ packages:
 
   babel-dead-code-elimination@1.0.9:
     resolution: {integrity: sha512-JLIhax/xullfInZjtu13UJjaLHDeTzt3vOeomaSUdO/nAMEL/pWC/laKrSvWylXMnVWyL5bpmG9njqBZlUQOdg==}
+
+  babel-plugin-react-compiler@19.0.0-beta-3229e95-20250315:
+    resolution: {integrity: sha512-r29/CW4gPXX2kgIdgiCmI/MJzeOhI9iM+FCYmg88bOj5esNhKrSPwp2YcOufLhZRGVX2VuX8ung9mFDsotQusg==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3252,6 +3258,10 @@ snapshots:
       '@babel/types': 7.26.10
     transitivePeerDependencies:
       - supports-color
+
+  babel-plugin-react-compiler@19.0.0-beta-3229e95-20250315:
+    dependencies:
+      '@babel/types': 7.26.10
 
   balanced-match@1.0.2: {}
 
