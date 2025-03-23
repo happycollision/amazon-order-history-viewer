@@ -3,7 +3,8 @@ import { loadCsv } from "../../csv"
 import { convertDateFromUtcToLocalTime } from "../../lib/date"
 import { Fragment } from "react/jsx-runtime"
 import { SimpleDate } from "../../components/date"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { highlightEffect } from "../../lib/highlightEffect"
 
 export const Route = createFileRoute("/orders/retail")({
 	component: RouteComponent,
@@ -110,6 +111,16 @@ function RouteComponent() {
 	const data = Route.useLoaderData()
 	const [amount, setAmount] = useState(undefined as string | undefined)
 	const [year, setYear] = useState(undefined as string | undefined)
+	const list = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		if (!list.current) return
+		if (amount === undefined) return
+		list.current
+			.querySelectorAll("[data-order-total]")
+			.forEach(highlightEffect(amount))
+	}, [list, amount])
+
 	return (
 		<div className="[--xPad:--spacing(4)] py-8 px-(--xPad)">
 			<h1 className="text-2xl">Retail Order History</h1>
@@ -137,7 +148,10 @@ function RouteComponent() {
 				</label>
 			</div>
 
-			<div className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8">
+			<div
+				ref={list}
+				className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8"
+			>
 				{data
 					.filter((order) => {
 						const needsYear = year !== undefined
@@ -205,7 +219,7 @@ function RouteComponent() {
 									</div>
 									<p className="text-right flex justify-between tabular-nums">
 										<span className="opacity-20 dark:opacity-50">$</span>
-										{order.total}
+										<span data-order-total>{order.total}</span>
 									</p>
 									<p>
 										{multiLine ?
