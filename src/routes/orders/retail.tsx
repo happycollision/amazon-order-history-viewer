@@ -52,11 +52,11 @@ function OrderDetailsLink({
 
 function RouteComponent() {
 	const { data } = useSuspenseQuery(retailOrderHistoryQuery)
-	const { amount, year } = Route.useSearch()
+	const { amount = "", year = "" } = Route.useSearch()
 	const setSearch = Route.useNavigate()
 
 	const setAmount = useCallback(
-		(amount: string | undefined) => {
+		(amount: string) => {
 			setSearch({
 				search: (current) => dropUndefinedSearchParams({ ...current, amount }),
 			})
@@ -65,7 +65,7 @@ function RouteComponent() {
 	)
 
 	const setYear = useCallback(
-		(year: string | undefined) => {
+		(year: string) => {
 			setSearch({
 				search: (current) => dropUndefinedSearchParams({ ...current, year }),
 			})
@@ -94,7 +94,7 @@ function RouteComponent() {
 					<input
 						className="inline-block border border-neutral-400 p-1 rounded"
 						value={amount}
-						onInput={(e) => setAmount(e.currentTarget.value)}
+						onChange={(e) => setAmount(e.currentTarget.value)}
 						inputMode="numeric"
 						pattern="[0-9.,]*"
 					/>
@@ -104,7 +104,7 @@ function RouteComponent() {
 					<input
 						className="inline-block border border-neutral-400 p-1 rounded"
 						value={year}
-						onInput={(e) => setYear(e.currentTarget.value)}
+						onChange={(e) => setYear(e.currentTarget.value)}
 						type="number"
 					/>
 				</label>
