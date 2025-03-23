@@ -87,6 +87,24 @@ export const Route = createFileRoute("/orders/retail")({
 	},
 })
 
+function InvoiceLink({
+	orderId,
+	children,
+}: {
+	orderId: string
+	children: React.ReactNode
+}) {
+	return (
+		<a
+			href={`https://www.amazon.com/gp/css/summary/print.html?orderID=${orderId}`}
+			target="_blank"
+			className="underline"
+		>
+			{children}
+		</a>
+	)
+}
+
 function RouteComponent() {
 	const data = Route.useLoaderData()
 	return (
@@ -107,13 +125,9 @@ function RouteComponent() {
 										{order.items.some((x) => x.giftCardUsed) && (
 											<span>
 												A gift card was used on this order.{" "}
-												<a
-													href={`https://www.amazon.com/gp/css/summary/print.html?orderID=${order.id}`}
-													target="_blank"
-													className="underline"
-												>
+												<InvoiceLink orderId={order.id}>
 													Check the invoice for the actual total.
-												</a>
+												</InvoiceLink>
 											</span>
 										)}
 									</>
