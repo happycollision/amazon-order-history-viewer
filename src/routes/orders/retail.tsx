@@ -98,7 +98,7 @@ function InvoiceLink({
 		<a
 			href={`https://www.amazon.com/gp/css/summary/print.html?orderID=${orderId}`}
 			target="_blank"
-			className="underline"
+			className="underline tabular-nums"
 		>
 			{children}
 		</a>
@@ -110,11 +110,14 @@ function RouteComponent() {
 	return (
 		<div className="[--xPad:--spacing(4)] py-8 px-(--xPad)">
 			<h1>Retail Order History</h1>
-			<div className="mt-4 grid grid-cols-[auto_auto_auto] gap-x-8">
+			<div className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8">
 				{data.map((order) => (
 					<Fragment key={order.id}>
-						<div className="grid col-span-3 grid-cols-subgrid odd:bg-amber-100 -mx-(--xPad) px-(--xPad) has-[[data-suss]]:bg-purple-200">
+						<div className="grid col-span-4 grid-cols-subgrid odd:bg-amber-100 -mx-(--xPad) px-(--xPad) has-[[data-suss]]:bg-purple-200">
 							<SimpleDate date={order.items[0].localDate} />
+							<InvoiceLink orderId={order.id}>
+								...{order.id.split("-").at(-1)}
+							</InvoiceLink>
 							<p className="text-right flex justify-between tabular-nums">
 								<span className="opacity-20">$</span>
 								{order.total}
@@ -136,10 +139,11 @@ function RouteComponent() {
 							{order.items.length >= 2 &&
 								order.items.map((item) => (
 									<div
-										className="grid-cols-subgrid grid col-span-3"
+										className="grid-cols-subgrid grid col-span-4"
 										data-suss={item.giftCardUsed || undefined}
 										key={item.id}
 									>
+										<p></p>
 										<p></p>
 										<p className="text-right flex justify-between tabular-nums">
 											<span className="opacity-20">$</span>
