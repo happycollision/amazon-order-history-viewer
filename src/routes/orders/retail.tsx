@@ -3,6 +3,7 @@ import { loadCsv } from "../../csv"
 import { convertDateFromUtcToLocalTime } from "../../lib/date"
 import { Fragment } from "react/jsx-runtime"
 import { SimpleDate } from "../../components/date"
+import { useState } from "react"
 
 export const Route = createFileRoute("/orders/retail")({
 	component: RouteComponent,
@@ -107,66 +108,87 @@ function InvoiceLink({
 
 function RouteComponent() {
 	const data = Route.useLoaderData()
+	const [amount, setAmount] = useState(undefined as string | undefined)
 	return (
 		<div className="[--xPad:--spacing(4)] py-8 px-(--xPad)">
-			<h1>Retail Order History</h1>
+			<h1 className="text-2xl">Retail Order History</h1>
+			<div>Filters:</div>
+			<label>
+				Order amount{" "}
+				<input
+					className="inline-block border border-neutral-400 p-1 rounded"
+					value={amount}
+					onInput={(e) => setAmount(e.currentTarget.value)}
+					inputMode="numeric"
+					pattern="[0-9.,]*"
+				/>
+			</label>
 			<div className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8">
-				{data.map((order) => {
-					const giftCardUsed = order.items.some((x) => x.giftCardUsed)
-					const cancelled = order.items.some(
-						(x) => x["Order Status"] === "Cancelled",
-					)
-					const multiLine = order.items.length > 1 || giftCardUsed || cancelled
-					return (
-						<Fragment key={order.id}>
-							<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 py-2 -mx-(--xPad) px-(--xPad)">
-								<SimpleDate date={order.items[0].localDate} />
-								<InvoiceLink orderId={order.id}>
-									...{order.id.split("-").at(-1)}
-								</InvoiceLink>
-								<p className="text-right flex justify-between tabular-nums">
-									<span className="opacity-20">$</span>
-									{order.total}
-								</p>
-								<p>
-									{multiLine ?
-										<>
-											{cancelled && (
-												<span className="inline-block bg-red-200 rounded-full text-sm px-2 border border-red-500 ">
-													This order was cancelled.
-												</span>
-											)}
-											{giftCardUsed && (
-												<span className="inline-block bg-purple-200 rounded-full text-sm px-2 border border-purple-500 ">
-													A gift card was used on this order.{" "}
-													<InvoiceLink orderId={order.id}>
-														Check the invoice
-													</InvoiceLink>{" "}
-													for the actual total.
-												</span>
-											)}
-										</>
-									:	order.items[0]["Product Name"]}
-								</p>
-								{multiLine &&
-									order.items.map((item) => (
-										<div
-											className="grid-cols-subgrid grid col-span-4"
-											key={item.id}
-										>
-											<p></p>
-											<p></p>
-											<p className="text-right flex justify-between tabular-nums">
-												<span className="opacity-20">$</span>
-												{item.amount}
-											</p>
-											<p>{item["Product Name"]}</p>
-										</div>
-									))}
-							</div>
-						</Fragment>
-					)
-				})}
+				{data
+					.filter((order) => {
+						if (amount === undefined) return true
+						if (order.items.some((x) => x.giftCardUsed)) {
+							return parseFloat(order.total) <= parseFloat(amount)
+						}
+						return order.total.includes(amount)
+					})
+					.map((order) => {
+						const giftCardUsed = order.items.some((x) => x.giftCardUsed)
+						const cancelled = order.items.some(
+							(x) => x["Order Status"] === "Cancelled",
+						)
+						const multiLine =
+							order.items.length > 1 || giftCardUsed || cancelled
+						return (
+							<Fragment key={order.id}>
+								<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 py-2 -mx-(--xPad) px-(--xPad)">
+									<SimpleDate date={order.items[0].localDate} />
+									<InvoiceLink orderId={order.id}>
+										...{order.id.split("-").at(-1)}
+									</InvoiceLink>
+									<p className="text-right flex justify-between tabular-nums">
+										<span className="opacity-20">$</span>
+										{order.total}
+									</p>
+									<p>
+										{multiLine ?
+											<>
+												{cancelled && (
+													<span className="inline-block bg-red-200 rounded-full text-sm px-2 border border-red-500 ">
+														This order was cancelled.
+													</span>
+												)}
+												{giftCardUsed && (
+													<span className="inline-block bg-purple-200 rounded-full text-sm px-2 border border-purple-500 ">
+														A gift card was used on this order.{" "}
+														<InvoiceLink orderId={order.id}>
+															Check the invoice
+														</InvoiceLink>{" "}
+														for the actual total.
+													</span>
+												)}
+											</>
+										:	order.items[0]["Product Name"]}
+									</p>
+									{multiLine &&
+										order.items.map((item) => (
+											<div
+												className="grid-cols-subgrid grid col-span-4"
+												key={item.id}
+											>
+												<p></p>
+												<p></p>
+												<p className="text-right flex justify-between tabular-nums">
+													<span className="opacity-20">$</span>
+													{item.amount}
+												</p>
+												<p>{item["Product Name"]}</p>
+											</div>
+										))}
+								</div>
+							</Fragment>
+						)
+					})}
 			</div>
 		</div>
 	)
