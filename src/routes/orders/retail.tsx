@@ -109,28 +109,62 @@ function InvoiceLink({
 function RouteComponent() {
 	const data = Route.useLoaderData()
 	const [amount, setAmount] = useState(undefined as string | undefined)
+	const [year, setYear] = useState(undefined as string | undefined)
 	return (
 		<div className="[--xPad:--spacing(4)] py-8 px-(--xPad)">
 			<h1 className="text-2xl">Retail Order History</h1>
-			<div>Filters:</div>
-			<label>
-				Order amount{" "}
-				<input
-					className="inline-block border border-neutral-400 p-1 rounded"
-					value={amount}
-					onInput={(e) => setAmount(e.currentTarget.value)}
-					inputMode="numeric"
-					pattern="[0-9.,]*"
-				/>
-			</label>
+
+			<div className="flex flex-col gap-2">
+				<header>Filters:</header>
+				<label className="flex gap-2">
+					<div className="w-32">Order amount </div>
+					<input
+						className="inline-block border border-neutral-400 p-1 rounded"
+						value={amount}
+						onInput={(e) => setAmount(e.currentTarget.value)}
+						inputMode="numeric"
+						pattern="[0-9.,]*"
+					/>
+				</label>
+				<label className="flex gap-2">
+					<div className="w-32">Year </div>
+					<input
+						className="inline-block border border-neutral-400 p-1 rounded"
+						value={year}
+						onInput={(e) => setYear(e.currentTarget.value)}
+						type="number"
+					/>
+				</label>
+			</div>
+
 			<div className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8">
 				{data
 					.filter((order) => {
-						if (amount === undefined) return true
-						if (order.items.some((x) => x.giftCardUsed)) {
-							return parseFloat(order.total) <= parseFloat(amount)
+						const needsYear = year !== undefined
+						let yearMatch = true
+						const needsAmount = amount !== undefined
+						let amountMatch = true
+
+						if (needsAmount) {
+							{
+								if (order.items.some((x) => x.giftCardUsed)) {
+									amountMatch = parseFloat(order.total) <= parseFloat(amount)
+								}
+								amountMatch = order.total.includes(amount)
+							}
 						}
-						return order.total.includes(amount)
+
+						if (needsYear) {
+							yearMatch = order.items[0].localDate
+								.getFullYear()
+								.toString()
+								.includes(year)
+						}
+
+						return (
+							(needsAmount ? amountMatch : true) &&
+							(needsYear ? yearMatch : true)
+						)
 					})
 					.map((order) => {
 						const giftCardUsed = order.items.some((x) => x.giftCardUsed)
