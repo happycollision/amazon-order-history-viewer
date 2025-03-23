@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { loadCsv } from "../../csv"
 import { convertDateFromUtcToLocalTime } from "../../lib/date"
 import { Fragment } from "react/jsx-runtime"
+import { SimpleDate } from "../../components/date"
 
 export const Route = createFileRoute("/orders/retail")({
 	component: RouteComponent,
@@ -95,14 +96,7 @@ function RouteComponent() {
 				{data.map((order) => (
 					<Fragment key={order.id}>
 						<div className="grid col-span-3 grid-cols-subgrid odd:bg-amber-100 -mx-(--xPad) px-(--xPad) has-[[data-suss]]:bg-purple-200">
-							<p className="flex gap-1 justify-between">
-								{order.items[0].localDate
-									.toLocaleDateString()
-									.split("/")
-									.map((x, i) => (
-										<span key={i}>{x}</span>
-									))}
-							</p>
+							<SimpleDate date={order.items[0].localDate} />
 							<p className="text-right flex justify-between tabular-nums">
 								<span className="opacity-20">$</span>
 								{order.total}
