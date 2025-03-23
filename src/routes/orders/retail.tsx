@@ -119,9 +119,8 @@ function RouteComponent() {
 									</>
 								:	order.items[0]["Product Name"]}
 							</p>
-							{order.items.length < 2 ?
-								""
-							:	order.items.map((item) => (
+							{order.items.length >= 2 &&
+								order.items.map((item) => (
 									<div
 										className="grid-cols-subgrid grid col-span-3"
 										data-suss={item.giftCardUsed || undefined}
@@ -134,8 +133,7 @@ function RouteComponent() {
 										</p>
 										<p>{item["Product Name"]}</p>
 									</div>
-								))
-							}
+								))}
 						</div>
 					</Fragment>
 				))}
