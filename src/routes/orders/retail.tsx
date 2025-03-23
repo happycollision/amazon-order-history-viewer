@@ -166,6 +166,27 @@ function RouteComponent() {
 							(needsYear ? yearMatch : true)
 						)
 					})
+					.sort((a, b) => {
+						if (amount === undefined) return 0
+
+						if (a.total === amount && b.total !== amount) return -1
+						if (a.total !== amount && b.total === amount) return 1
+
+						if (
+							parseFloat(a.total).toFixed(2) ===
+								parseFloat(amount).toFixed(2) &&
+							parseFloat(b.total).toFixed(2) !== parseFloat(amount).toFixed(2)
+						)
+							return -1
+						if (
+							parseFloat(a.total).toFixed(2) !==
+								parseFloat(amount).toFixed(2) &&
+							parseFloat(b.total).toFixed(2) === parseFloat(amount).toFixed(2)
+						)
+							return 1
+
+						return 0
+					})
 					.map((order) => {
 						const giftCardUsed = order.items.some((x) => x.giftCardUsed)
 						const cancelled = order.items.some(
@@ -183,7 +204,7 @@ function RouteComponent() {
 										</OrderDetailsLink>
 									</div>
 									<p className="text-right flex justify-between tabular-nums">
-										<span className="opacity-20">$</span>
+										<span className="opacity-20 dark:opacity-50">$</span>
 										{order.total}
 									</p>
 									<p>
@@ -215,7 +236,7 @@ function RouteComponent() {
 												<p></p>
 												<p></p>
 												<p className="text-right flex justify-between tabular-nums">
-													<span className="opacity-20">$</span>
+													<span className="opacity-20 dark:opacity-50">$</span>
 													{item.amount}
 												</p>
 												<p>{item["Product Name"]}</p>
