@@ -4,7 +4,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 export const Route = createRootRoute({
 	component: () => (
 		<>
-			<header className="bg-red-300">
+			<header className="bg-red-300 dark:bg-red-700">
 				<nav>
 					<ul className="flex gap-4 [&>li>a]:p-4 [&>li>a]:inline-block  [&>li>a]:hover:bg-red-400 [&>li>a[data-status=active]]:bg-red-400 [&>li>a[data-status=active]]:text-white">
 						<li>

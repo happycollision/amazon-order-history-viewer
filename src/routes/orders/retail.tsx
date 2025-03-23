@@ -175,7 +175,7 @@ function RouteComponent() {
 							order.items.length > 1 || giftCardUsed || cancelled
 						return (
 							<Fragment key={order.id}>
-								<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 py-2 -mx-(--xPad) px-(--xPad)">
+								<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 dark:odd:bg-blue-900 py-2 -mx-(--xPad) px-(--xPad)">
 									<SimpleDate date={order.items[0].localDate} />
 									<InvoiceLink orderId={order.id}>
 										...{order.id.split("-").at(-1)}
