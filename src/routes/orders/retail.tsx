@@ -88,7 +88,7 @@ export const Route = createFileRoute("/orders/retail")({
 	},
 })
 
-function InvoiceLink({
+function OrderDetailsLink({
 	orderId,
 	children,
 }: {
@@ -97,7 +97,7 @@ function InvoiceLink({
 }) {
 	return (
 		<a
-			href={`https://www.amazon.com/gp/css/summary/print.html?orderID=${orderId}`}
+			href={`https://www.amazon.com/gp/your-account/order-details?orderID=${orderId}`}
 			target="_blank"
 			className="underline tabular-nums"
 		>
@@ -177,9 +177,11 @@ function RouteComponent() {
 							<Fragment key={order.id}>
 								<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 dark:odd:bg-blue-900 py-2 -mx-(--xPad) px-(--xPad)">
 									<SimpleDate date={order.items[0].localDate} />
-									<InvoiceLink orderId={order.id}>
-										...{order.id.split("-").at(-1)}
-									</InvoiceLink>
+									<div>
+										<OrderDetailsLink orderId={order.id}>
+											...{order.id.split("-").at(-1)}
+										</OrderDetailsLink>
+									</div>
 									<p className="text-right flex justify-between tabular-nums">
 										<span className="opacity-20">$</span>
 										{order.total}
@@ -195,9 +197,9 @@ function RouteComponent() {
 												{giftCardUsed && (
 													<span className="inline-block bg-purple-200 rounded-full text-sm px-2 border border-purple-500 ">
 														A gift card was used on this order.{" "}
-														<InvoiceLink orderId={order.id}>
-															Check the invoice
-														</InvoiceLink>{" "}
+														<OrderDetailsLink orderId={order.id}>
+															Check the order details
+														</OrderDetailsLink>{" "}
 														for the actual total.
 													</span>
 												)}
