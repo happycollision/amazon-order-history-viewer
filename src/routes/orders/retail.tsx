@@ -113,7 +113,10 @@ function RouteComponent() {
 			<div className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8">
 				{data.map((order) => {
 					const giftCardUsed = order.items.some((x) => x.giftCardUsed)
-					const multiLine = order.items.length > 1 || giftCardUsed
+					const cancelled = order.items.some(
+						(x) => x["Order Status"] === "Cancelled",
+					)
+					const multiLine = order.items.length > 1 || giftCardUsed || cancelled
 					return (
 						<Fragment key={order.id}>
 							<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 py-2 -mx-(--xPad) px-(--xPad)">
@@ -128,6 +131,11 @@ function RouteComponent() {
 								<p>
 									{multiLine ?
 										<>
+											{cancelled && (
+												<span className="inline-block bg-red-200 rounded-full text-sm px-2 border border-red-500 ">
+													This order was cancelled.
+												</span>
+											)}
 											{giftCardUsed && (
 												<span className="inline-block bg-purple-200 rounded-full text-sm px-2 border border-purple-500 ">
 													A gift card was used on this order.{" "}
