@@ -3,12 +3,18 @@ import { loadCsv } from "../../csv"
 import { convertDateFromUtcToLocalTime } from "../../lib/date"
 import { Fragment } from "react/jsx-runtime"
 import { SimpleDate } from "../../components/date"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { highlightEffect } from "../../lib/highlightEffect"
 
 export const Route = createFileRoute("/orders/retail")({
 	component: RouteComponent,
 	pendingComponent: () => <div>Papa parse-ing:...</div>,
+	validateSearch: (search) => {
+		return {
+			amount: search.amount as string | undefined,
+			year: search.year as string | undefined,
+		}
+	},
 	loader: async () => {
 		const allIds = new Set<string>()
 		const repeatedIds = new Set<string>()
@@ -109,8 +115,23 @@ function OrderDetailsLink({
 
 function RouteComponent() {
 	const data = Route.useLoaderData()
-	const [amount, setAmount] = useState(undefined as string | undefined)
-	const [year, setYear] = useState(undefined as string | undefined)
+	const { amount, year } = Route.useSearch()
+	const setSearch = Route.useNavigate()
+
+	const setAmount = useCallback(
+		(amount: string | undefined) => {
+			setSearch({ search: (current) => ({ ...current, amount }) })
+		},
+		[setSearch, year],
+	)
+
+	const setYear = useCallback(
+		(year: string | undefined) => {
+			setSearch({ search: (current) => ({ ...current, year }) })
+		},
+		[setSearch, amount],
+	)
+
 	const list = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
