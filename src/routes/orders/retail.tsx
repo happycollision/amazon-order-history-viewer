@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { loadCsv } from "../../csv"
 import { convertDateFromUtcToLocalTime } from "../../lib/date"
+import { Fragment } from "react/jsx-runtime"
 
 export const Route = createFileRoute("/orders/retail")({
 	component: RouteComponent,
@@ -58,16 +59,30 @@ export const Route = createFileRoute("/orders/retail")({
 					.join("."),
 
 				dupeId: false,
+
+				giftCardUsed: row["Payment Instrument Type"].includes(
+					"Gift Certificate/Card",
+				),
 			}
 		})
 
+		const finalOrders = new Map<string, typeof enhancedData>()
+
 		for (const row of enhancedData) {
-			if (repeatedIds.has(row["Order ID"])) {
-				row.dupeId = true
+			if (!finalOrders.has(row["Order ID"])) {
+				finalOrders.set(row["Order ID"], [row])
+			} else {
+				finalOrders.get(row["Order ID"])?.push(row)
 			}
 		}
 
-		return enhancedData
+		return [...finalOrders].map(([id, rows]) => ({
+			id,
+			items: rows,
+			total: rows
+				.reduce((acc, row) => acc + parseFloat(row.amount), 0)
+				.toFixed(2),
+		}))
 	},
 })
 
@@ -76,27 +91,59 @@ function RouteComponent() {
 	return (
 		<div className="[--xPad:--spacing(4)] py-8 px-(--xPad)">
 			<h1>Retail Order History</h1>
-			<div className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8">
-				{data.map((row) => (
-					<div
-						className="grid col-span-4 grid-cols-subgrid odd:bg-amber-100 -mx-(--xPad) px-(--xPad)"
-						key={row.id}
-					>
-						<p className="tabular-nums">{row.dupeId ? row["Order ID"] : ""}</p>
-						<p className="flex gap-1 justify-between">
-							{row.localDate
-								.toLocaleDateString()
-								.split("/")
-								.map((x, i) => (
-									<span key={i}>{x}</span>
-								))}
-						</p>
-						<p className="text-right flex justify-between tabular-nums">
-							<span className="opacity-20">$</span>
-							{row.amount}
-						</p>
-						<p>{row["Product Name"]}</p>
-					</div>
+			<div className="mt-4 grid grid-cols-[auto_auto_auto] gap-x-8">
+				{data.map((order) => (
+					<Fragment key={order.id}>
+						<div className="grid col-span-3 grid-cols-subgrid odd:bg-amber-100 -mx-(--xPad) px-(--xPad) has-[[data-suss]]:bg-purple-200">
+							<p className="flex gap-1 justify-between">
+								{order.items[0].localDate
+									.toLocaleDateString()
+									.split("/")
+									.map((x, i) => (
+										<span key={i}>{x}</span>
+									))}
+							</p>
+							<p className="text-right flex justify-between tabular-nums">
+								<span className="opacity-20">$</span>
+								{order.total}
+							</p>
+							<p>
+								{order.items.length > 1 ?
+									<>
+										{order.items.some((x) => x.giftCardUsed) && (
+											<span>
+												A gift card was used on this order.{" "}
+												<a
+													href={`https://www.amazon.com/gp/css/summary/print.html?orderID=${order.id}`}
+													target="_blank"
+													className="underline"
+												>
+													Check the invoice for the actual total.
+												</a>
+											</span>
+										)}
+									</>
+								:	order.items[0]["Product Name"]}
+							</p>
+							{order.items.length < 2 ?
+								""
+							:	order.items.map((item) => (
+									<div
+										className="grid-cols-subgrid grid col-span-3"
+										data-suss={item.giftCardUsed || undefined}
+										key={item.id}
+									>
+										<p></p>
+										<p className="text-right flex justify-between tabular-nums">
+											<span className="opacity-20">$</span>
+											{item.amount}
+										</p>
+										<p>{item["Product Name"]}</p>
+									</div>
+								))
+							}
+						</div>
+					</Fragment>
 				))}
 			</div>
 		</div>
