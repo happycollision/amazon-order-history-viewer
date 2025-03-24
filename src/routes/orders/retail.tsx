@@ -142,23 +142,41 @@ function RouteComponent() {
 						)
 					})
 					.sort((a, b) => {
-						if (amount === undefined) return 0
+						if (amount === undefined || amount === "") return 0
 
 						if (a.total === amount && b.total !== amount) return -1
 						if (a.total !== amount && b.total === amount) return 1
 
-						if (
-							parseFloat(a.total).toFixed(2) ===
-								parseFloat(amount).toFixed(2) &&
-							parseFloat(b.total).toFixed(2) !== parseFloat(amount).toFixed(2)
-						)
-							return -1
-						if (
-							parseFloat(a.total).toFixed(2) !==
-								parseFloat(amount).toFixed(2) &&
-							parseFloat(b.total).toFixed(2) === parseFloat(amount).toFixed(2)
-						)
-							return 1
+						if (amount.includes(".")) {
+							if (
+								parseFloat(a.total).toFixed(2) ===
+									parseFloat(amount).toFixed(2) &&
+								parseFloat(b.total).toFixed(2) !== parseFloat(amount).toFixed(2)
+							)
+								return -1
+							if (
+								parseFloat(a.total).toFixed(2) !==
+									parseFloat(amount).toFixed(2) &&
+								parseFloat(b.total).toFixed(2) === parseFloat(amount).toFixed(2)
+							)
+								return 1
+						} else {
+							const aFlooredMatch =
+								Math.floor(parseFloat(a.total)) === Number(amount)
+							const bFlooredMatch =
+								Math.floor(parseFloat(b.total)) === Number(amount)
+							if (aFlooredMatch && !bFlooredMatch) return -1
+							if (bFlooredMatch && !aFlooredMatch) return 1
+
+							const aFlooredContains = Math.floor(parseFloat(a.total))
+								.toString()
+								.includes(amount)
+							const bFlooredContains = Math.floor(parseFloat(b.total))
+								.toString()
+								.includes(amount)
+							if (aFlooredContains && !bFlooredContains) return -1
+							if (bFlooredContains && !aFlooredContains) return 1
+						}
 
 						return 0
 					})
