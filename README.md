@@ -1,3 +1,30 @@
+# Amazon Order History Viewer
+
+Amazon used to have a way to view your purchase information in a friendly,
+queryable manner. That ship has sailed. Now, if you want to quickly search
+through a year of data at once, as you prepare your taxes for example, you have
+to do it via CSV.
+
+No. No that is not great.
+
+This fully client side SPA takes that data and makes it searchable from one
+webpage. And it links you back to all your orders in case you need to see more
+info.
+
+Why would you need more info? Because Amazon does not provide info on how your
+payments were split between gift cards and other payment types. So you have to
+actually go view orders sometimes. So this SPA detects which orders were paid
+with a gift card and suggests you might need to look those up directly if you
+are reconciling.
+
+It doesn't yet work for non-developers, though I will add file "uploads" soon.
+
+"Just" drop your downloaded Amazon data in the public folder.
+
+Everything below this line is via initial project creation with TanStack.
+
+---
+
 Welcome to your new TanStack app!
 
 # Getting Started

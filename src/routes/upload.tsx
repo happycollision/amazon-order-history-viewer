@@ -7,7 +7,8 @@ export const Route = createFileRoute("/upload")({
 function Upload() {
 	return (
 		<div>
-			<header className="text-purple-700">Dis da upload page</header>
+			Uploads will be supported soon. For now, you have to actually run this app
+			locally and populate the csv files in the public/orders folder.
 		</div>
 	)
 }
