@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { Fragment } from "react/jsx-runtime"
 import { SimpleDate } from "../../components/date"
-import { useCallback, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { highlightEffect } from "../../lib/highlightEffect"
 import { queryClient } from "../../lib/queryClient"
 import { retailOrderHistoryQuery } from "../../lib/dataLoading"
@@ -55,23 +55,17 @@ function RouteComponent() {
 	const { amount = "", year = "" } = Route.useSearch()
 	const setSearch = Route.useNavigate()
 
-	const setAmount = useCallback(
-		(amount: string) => {
-			setSearch({
-				search: (current) => dropUndefinedSearchParams({ ...current, amount }),
-			})
-		},
-		[setSearch],
-	)
+	const setAmount = (amount: string) => {
+		setSearch({
+			search: (current) => dropUndefinedSearchParams({ ...current, amount }),
+		})
+	}
 
-	const setYear = useCallback(
-		(year: string) => {
-			setSearch({
-				search: (current) => dropUndefinedSearchParams({ ...current, year }),
-			})
-		},
-		[setSearch],
-	)
+	const setYear = (year: string) => {
+		setSearch({
+			search: (current) => dropUndefinedSearchParams({ ...current, year }),
+		})
+	}
 
 	const list = useRef<HTMLDivElement>(null)
 
@@ -81,6 +75,69 @@ function RouteComponent() {
 			.querySelectorAll("[data-order-total]")
 			.forEach(highlightEffect(amount))
 	}, [list, amount])
+
+	const filteredData = data
+		.filter((order) => {
+			const needsYear = year !== undefined
+			let yearMatch = true
+			const needsAmount = amount !== undefined
+			let amountMatch = true
+
+			if (needsAmount) {
+				{
+					if (order.items.some((x) => x.giftCardUsed)) {
+						amountMatch = parseFloat(order.total) <= parseFloat(amount)
+					}
+					amountMatch = order.total.includes(amount)
+				}
+			}
+
+			if (needsYear) {
+				yearMatch = order.items[0].localDate
+					.getFullYear()
+					.toString()
+					.includes(year)
+			}
+
+			return (
+				(needsAmount ? amountMatch : true) && (needsYear ? yearMatch : true)
+			)
+		})
+		.sort((a, b) => {
+			if (amount === undefined || amount === "") return 0
+
+			if (a.total === amount && b.total !== amount) return -1
+			if (a.total !== amount && b.total === amount) return 1
+
+			if (amount.includes(".")) {
+				if (
+					parseFloat(a.total).toFixed(2) === parseFloat(amount).toFixed(2) &&
+					parseFloat(b.total).toFixed(2) !== parseFloat(amount).toFixed(2)
+				)
+					return -1
+				if (
+					parseFloat(a.total).toFixed(2) !== parseFloat(amount).toFixed(2) &&
+					parseFloat(b.total).toFixed(2) === parseFloat(amount).toFixed(2)
+				)
+					return 1
+			} else {
+				const aFlooredMatch = Math.floor(parseFloat(a.total)) === Number(amount)
+				const bFlooredMatch = Math.floor(parseFloat(b.total)) === Number(amount)
+				if (aFlooredMatch && !bFlooredMatch) return -1
+				if (bFlooredMatch && !aFlooredMatch) return 1
+
+				const aFlooredContains = Math.floor(parseFloat(a.total))
+					.toString()
+					.includes(amount)
+				const bFlooredContains = Math.floor(parseFloat(b.total))
+					.toString()
+					.includes(amount)
+				if (aFlooredContains && !bFlooredContains) return -1
+				if (bFlooredContains && !aFlooredContains) return 1
+			}
+
+			return 0
+		})
 
 	return (
 		<div className="[--xPad:--spacing(4)] py-8 px-(--xPad)">
@@ -113,132 +170,64 @@ function RouteComponent() {
 				ref={list}
 				className="mt-4 grid grid-cols-[auto_auto_auto_auto] gap-x-8"
 			>
-				{data
-					.filter((order) => {
-						const needsYear = year !== undefined
-						let yearMatch = true
-						const needsAmount = amount !== undefined
-						let amountMatch = true
-
-						if (needsAmount) {
-							{
-								if (order.items.some((x) => x.giftCardUsed)) {
-									amountMatch = parseFloat(order.total) <= parseFloat(amount)
-								}
-								amountMatch = order.total.includes(amount)
-							}
-						}
-
-						if (needsYear) {
-							yearMatch = order.items[0].localDate
-								.getFullYear()
-								.toString()
-								.includes(year)
-						}
-
-						return (
-							(needsAmount ? amountMatch : true) &&
-							(needsYear ? yearMatch : true)
-						)
-					})
-					.sort((a, b) => {
-						if (amount === undefined || amount === "") return 0
-
-						if (a.total === amount && b.total !== amount) return -1
-						if (a.total !== amount && b.total === amount) return 1
-
-						if (amount.includes(".")) {
-							if (
-								parseFloat(a.total).toFixed(2) ===
-									parseFloat(amount).toFixed(2) &&
-								parseFloat(b.total).toFixed(2) !== parseFloat(amount).toFixed(2)
-							)
-								return -1
-							if (
-								parseFloat(a.total).toFixed(2) !==
-									parseFloat(amount).toFixed(2) &&
-								parseFloat(b.total).toFixed(2) === parseFloat(amount).toFixed(2)
-							)
-								return 1
-						} else {
-							const aFlooredMatch =
-								Math.floor(parseFloat(a.total)) === Number(amount)
-							const bFlooredMatch =
-								Math.floor(parseFloat(b.total)) === Number(amount)
-							if (aFlooredMatch && !bFlooredMatch) return -1
-							if (bFlooredMatch && !aFlooredMatch) return 1
-
-							const aFlooredContains = Math.floor(parseFloat(a.total))
-								.toString()
-								.includes(amount)
-							const bFlooredContains = Math.floor(parseFloat(b.total))
-								.toString()
-								.includes(amount)
-							if (aFlooredContains && !bFlooredContains) return -1
-							if (bFlooredContains && !aFlooredContains) return 1
-						}
-
-						return 0
-					})
-					.map((order) => {
-						const giftCardUsed = order.items.some((x) => x.giftCardUsed)
-						const cancelled = order.items.some(
-							(x) => x["Order Status"] === "Cancelled",
-						)
-						const multiLine =
-							order.items.length > 1 || giftCardUsed || cancelled
-						return (
-							<Fragment key={order.id}>
-								<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 dark:odd:bg-blue-900 py-2 -mx-(--xPad) px-(--xPad)">
-									<SimpleDate date={order.items[0].localDate} />
-									<div>
-										<OrderDetailsLink orderId={order.id}>
-											...{order.id.split("-").at(-1)}
-										</OrderDetailsLink>
-									</div>
-									<p className="text-right flex justify-between tabular-nums">
-										<span className="opacity-20 dark:opacity-50">$</span>
-										<span data-order-total>{order.total}</span>
-									</p>
-									<p>
-										{multiLine ?
-											<>
-												{cancelled && (
-													<span className="inline-block bg-red-200 rounded-full text-sm px-2 border border-red-500 dark:bg-red-800 dark:border-red-300">
-														This order was cancelled.
-													</span>
-												)}
-												{giftCardUsed && (
-													<span className="inline-block bg-purple-200 dark:bg-purple-800 dark:border-purple-300 rounded-full text-sm px-2 border border-purple-500 ">
-														A gift card was used on this order.{" "}
-														<OrderDetailsLink orderId={order.id}>
-															Check the order details
-														</OrderDetailsLink>{" "}
-														for the actual total.
-													</span>
-												)}
-											</>
-										:	order.items[0]["Product Name"]}
-									</p>
-									{multiLine &&
-										order.items.map((item) => (
-											<div
-												className="grid-cols-subgrid grid col-span-4"
-												key={item.id}
-											>
-												<p></p>
-												<p></p>
-												<p className="text-right flex justify-between tabular-nums">
-													<span className="opacity-20 dark:opacity-50">$</span>
-													{item.amount}
-												</p>
-												<p>{item["Product Name"]}</p>
-											</div>
-										))}
+				{filteredData.map((order) => {
+					const giftCardUsed = order.items.some((x) => x.giftCardUsed)
+					const cancelled = order.items.some(
+						(x) => x["Order Status"] === "Cancelled",
+					)
+					const multiLine = order.items.length > 1 || giftCardUsed || cancelled
+					return (
+						<Fragment key={order.id}>
+							<div className="grid col-span-4 grid-cols-subgrid odd:bg-blue-50 dark:odd:bg-blue-900 py-2 -mx-(--xPad) px-(--xPad)">
+								<SimpleDate date={order.items[0].localDate} />
+								<div>
+									<OrderDetailsLink orderId={order.id}>
+										...{order.id.split("-").at(-1)}
+									</OrderDetailsLink>
 								</div>
-							</Fragment>
-						)
-					})}
+								<p className="text-right flex justify-between tabular-nums">
+									<span className="opacity-20 dark:opacity-50">$</span>
+									<span data-order-total>{order.total}</span>
+								</p>
+								<p>
+									{multiLine ?
+										<>
+											{cancelled && (
+												<span className="inline-block bg-red-200 rounded-full text-sm px-2 border border-red-500 dark:bg-red-800 dark:border-red-300">
+													This order was cancelled.
+												</span>
+											)}
+											{giftCardUsed && (
+												<span className="inline-block bg-purple-200 dark:bg-purple-800 dark:border-purple-300 rounded-full text-sm px-2 border border-purple-500 ">
+													A gift card was used on this order.{" "}
+													<OrderDetailsLink orderId={order.id}>
+														Check the order details
+													</OrderDetailsLink>{" "}
+													for the actual total.
+												</span>
+											)}
+										</>
+									:	order.items[0]["Product Name"]}
+								</p>
+								{multiLine &&
+									order.items.map((item) => (
+										<div
+											className="grid-cols-subgrid grid col-span-4"
+											key={item.id}
+										>
+											<p></p>
+											<p></p>
+											<p className="text-right flex justify-between tabular-nums">
+												<span className="opacity-20 dark:opacity-50">$</span>
+												{item.amount}
+											</p>
+											<p>{item["Product Name"]}</p>
+										</div>
+									))}
+							</div>
+						</Fragment>
+					)
+				})}
 			</div>
 		</div>
 	)
