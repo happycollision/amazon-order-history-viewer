@@ -86,9 +86,10 @@ function RouteComponent() {
 			if (needsAmount) {
 				{
 					if (order.items.some((x) => x.giftCardUsed)) {
-						amountMatch = parseFloat(order.total) <= parseFloat(amount)
+						amountMatch = parseFloat(order.total) >= parseFloat(amount)
+					} else {
+						amountMatch = order.total.includes(amount)
 					}
-					amountMatch = order.total.includes(amount)
 				}
 			}
 
@@ -108,6 +109,12 @@ function RouteComponent() {
 
 			if (a.total === amount && b.total !== amount) return -1
 			if (a.total !== amount && b.total === amount) return 1
+			if (a.total.includes(amount) && !b.total.includes(amount)) {
+				return -1
+			}
+			if (!a.total.includes(amount) && b.total.includes(amount)) {
+				return 1
+			}
 
 			if (amount.includes(".")) {
 				if (
