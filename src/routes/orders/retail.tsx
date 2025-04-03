@@ -150,7 +150,17 @@ function RouteComponent() {
 					<input
 						className="inline-block border border-neutral-400 p-1 rounded"
 						value={amount}
-						onChange={(e) => setAmount(e.currentTarget.value)}
+						onChange={(e) => {
+							setAmount(e.currentTarget.value)
+							const inputEl = e.currentTarget
+							setTimeout(() => {
+								// After a delay, select all the text in the input, ready for the user's next query
+
+								if (inputEl) {
+									inputEl.select()
+								}
+							}, 3000)
+						}}
 						inputMode="numeric"
 						pattern="[0-9.,]*"
 					/>
