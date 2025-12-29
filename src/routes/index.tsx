@@ -8,8 +8,9 @@ export const Route = createFileRoute("/")({
 function App() {
 	return (
 		<div>
-			This page used to house some Amazon file descriptions. Instead, it will
-			become instructions for using the app... soon.
+			If the app is ever released with LocalStorage functionality, this page
+			will have instructions about how to use the app. For now, check the README
+			file to learn how to get your data into the app.
 		</div>
 	)
 }

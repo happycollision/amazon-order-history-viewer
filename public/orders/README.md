@@ -1,6 +1,3 @@
-This should contain the unzipped folders/files of your amazon data history
-download.
-
 This folder should contain the unzipped files from your Amazon order history
 data download. Initially, these files included:
 
@@ -17,7 +14,6 @@ data download. Initially, these files included:
 │   ├── Digital.Orders.Returns.Transaction.1.csv
 │   └── README.txt
 ├── FileDescriptions.csv
-├── README.md
 ├── Retail.CartItems.1
 │   └── Retail.CartItems.1.csv
 ├── Retail.CustomerReturns.1

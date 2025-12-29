@@ -19,9 +19,35 @@ are reconciling.
 
 It doesn't yet work for non-developers, though I will add file "uploads" soon.
 
-"Just" drop your downloaded Amazon data in the public folder.
+## Getting your data
 
-Everything below this line is via initial project creation with TanStack.
+> These steps may change. It's Amazon, not me, so... 🤷‍♂️
+
+1. Go to the data request area of your Amazon account.  
+   https://www.amazon.com/hz/privacy-central/data-requests/preview.html  
+    If that link is broken, search Manage Your Data > Request Your Data in the
+   "Your account" page.
+2. Look for "Your Orders" and submit a request for that data.
+   ![alt text](data_request_screen_2025-12.png)
+3. Confirm your request by clicking a link that will be sent to you via email.
+4. Wait until your requested data is ready. Amazon says it should usually take
+   no more than a month. 😐 Mine seems to take an hour.
+
+## Using your data in this app
+
+Welcome back. Has it been a month? Regardless, now that you have your data, you
+should drop it into the /public/orders directory in this repo. There is a
+[README.md file](/public/orders/README.md) in there that will explain what we
+hope to see in that directory after you place your unzipped files in there.
+
+## Running the app
+
+You could get your dev environment set up however you like, but I recommend
+[`mise`](https://mise.jdx.dev). If you do, you only need to `mise install` in
+this directory.
+
+Then you can follow TanStack's instructions below, which were generated along
+with this projects initial boiler plate code.
 
 ---
 
